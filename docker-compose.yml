@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_PASSWORD: "123" 
+    ports:
+      - "5432:5432"
+
+  
+  auth:
+    build: ./auth-service # Docker сам ищет Dockerfile в этой папке
+    depends_on:
+      - db
+
+  
+  server:
+    build: ./messenger-server
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - auth
