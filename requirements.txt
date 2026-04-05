@@ -1,1 +1,4 @@
-#тоже сейчас пропишу
+grpcio==1.62.1
+grpcio-tools==1.62.1
+PyJWT==2.8.0
+python-dotenv==1.0.1
