@@ -18,7 +18,9 @@ services:
     # ports: - "6379:6379"
 
   auth:
-    build: ./auth-service 
+    build:
+      context: .
+      dockerfile: auth-service/Dockerfile
     container_name: auth_service
     depends_on:
       - db
