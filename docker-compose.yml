@@ -21,6 +21,8 @@ services:
     build:
       context: .
       dockerfile: auth-service/Dockerfile
+    ports:
+       - "50051:50051"
     container_name: auth_service
     depends_on:
       - db
