@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from shared.proto import auth_pb2 as shared_dot_proto_dot_auth__pb2
+import shared.gen.py.auth_pb2 as shared_dot_proto_dot_auth__pb2
 
 
 class AuthServiceStub(object):

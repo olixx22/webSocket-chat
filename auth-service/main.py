@@ -2,8 +2,8 @@ import grpc
 from concurrent import futures
 from dotenv import load_dotenv
 import os
-import shared.proto.auth_pb2 as auth_pb2
-import shared.proto.auth_pb2_grpc as auth_pb2_grpc
+import shared.gen.py.auth_pb2 as auth_pb2
+import shared.gen.py.auth_pb2_grpc as auth_pb2_grpc
 from shared.jwt import create_access_token, decode_token
 load_dotenv()
 
