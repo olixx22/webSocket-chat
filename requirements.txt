@@ -3,3 +3,4 @@ grpcio-tools==1.62.1
 PyJWT==2.8.0
 python-dotenv==1.0.1
 protobuf==4.25.3
+asyncio==4.0.0

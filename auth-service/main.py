@@ -54,10 +54,11 @@ class AuthService(auth_pb2_grpc.AuthServiceServicer):
         )
 async def serve():
 
-    auth_pb2_grpc.add_AuthServiceServicer_to_server(AuthService(), server())
-    server.add_insecure_port('[::]:50051')
-    await server().start()
-    await server().wait_for_termination()
+    s = server()
+    auth_pb2_grpc.add_AuthServiceServicer_to_server(AuthService(), s)
+    s.add_insecure_port('[::]:50051')
+    await s.start()
+    await s.wait_for_termination()
 
 
 if __name__ == '__main__':
