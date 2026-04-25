@@ -15,8 +15,8 @@ import (
 
 const (
 	envLocal = "local"
-	envDev = "dev"
-	envProd = "prod"
+	envDev   = "dev"
+	envProd  = "prod"
 )
 
 func main() {
@@ -26,7 +26,11 @@ func main() {
 
 	log.Info("starting messenger-server", slog.String("addr", cfg.WSServer.Address))
 
-	application := app.New(context.Background(), cfg, log, "some example url") //Refactor this
+	application, err := app.New(context.Background(), cfg, log, cfg.PostgresURL)
+	if err != nil {
+		log.Error("failed to initialize application", sl.Err(err))
+		return
+	}
 
 	go application.WebSocketApp.MustRun()
 
@@ -39,9 +43,8 @@ func main() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	
-	
-	if err := application.WebSocketApp.Stop(ctx); err != nil {
+
+	if err := application.Stop(ctx); err != nil {
 		log.Error("failed to stop server", sl.Err(err))
 		return
 	}

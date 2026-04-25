@@ -1,5 +1,5 @@
-env: "local"
+env: 'local'
 wsserver:
-  address: "localhost:8081" 
+  address: '0.0.0.0:8080'
   timeout: 4s
   idle_timeout: 60s

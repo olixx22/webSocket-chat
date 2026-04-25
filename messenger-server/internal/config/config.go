@@ -2,6 +2,7 @@ package config
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 
 type Config struct {
 	Env string `yaml:"env" env-default:"local"`
+	PostgresURL string 
 	WSServer `yaml:"wsserver"`
 }
 
@@ -34,6 +36,12 @@ func MustLoad() *Config {
 
 	if err := cleanenv.ReadConfig(path, &cfg); err != nil {
 		panic("cannot read config: " + err.Error())
+	}
+
+	cfg.PostgresURL = fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_NAME"))
+
+	if cfg.PostgresURL == "" {
+		panic("db url is empty")
 	}
 
 	return &cfg

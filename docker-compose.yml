@@ -4,45 +4,60 @@ services:
     container_name: auth_db
     restart: always
     environment:
-      POSTGRES_USER: ${DB_USER:-postgres} 
+      POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
       POSTGRES_DB: ${DB_NAME:-messenger_db}
-    # ports: - "5432:5432" 
+    ports:
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:7-alpine
-    container_name: messenger_redis 
+    container_name: messenger_redis
     restart: always
-    # ports: - "6379:6379"
+    # ports:
+    #   - "6379:6379"
 
   auth:
     build:
       context: .
       dockerfile: auth-service/Dockerfile
     ports:
-       - "50051:50051"
+      - "50051:50051"
     container_name: auth_service
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
       - JWT_SECRET=${JWT_SECRET}
 
   server:
-    build: ./messenger-server
+    build:
+      context: .
+      dockerfile: messenger-server/Dockerfile
     container_name: messenger_server
     ports:
-      - "8080:8080" 
+      - "8080:8080"
     depends_on:
-      - db
-      - auth
-      - redis 
+      db:
+        condition: service_healthy
+      auth:
+        condition: service_started
+      redis:
+        condition: service_started
+    env_file:
+      - .env
     environment:
-      - AUTH_SERVICE_ADDR=auth:50051 
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      - AUTH_SERVICE_ADDR=auth:50051
+      - CONFIG_PATH=/app/config/local.yaml
+      - MIGRATIONS_PATH=/app/migrations
 
 volumes:
   postgres_data:
